@@ -196,6 +196,8 @@
             border: 3px solid #ffafcc;
             margin-top: 20px;
             position: relative;
+            width: 100%; /* Added */
+            box-sizing: border-box; /* Added */
         }
 
         .close-focused {
@@ -236,6 +238,7 @@
             justify-content: center;
             gap: 15px;
             margin-bottom: 25px;
+            flex-wrap: wrap; /* Added for mobile */
         }
 
         .nav-btn {
@@ -260,15 +263,17 @@
         .focused-calendar {
             width: 100%;
             border-collapse: separate;
-            border-spacing: 10px;
+            border-spacing: 8px; /* Reduced from 10px */
+            table-layout: fixed; /* Added - crucial for equal column widths */
         }
 
         .focused-calendar th {
-            padding: 15px 5px;
+            padding: 15px 2px; /* Reduced horizontal padding */
             font-weight: 700;
             color: #cdb4db;
             text-transform: uppercase;
             font-size: 0.9rem;
+            width: 14.28%; /* Added - equal width for 7 columns */
         }
 
         .focused-calendar td {
@@ -280,9 +285,10 @@
             cursor: pointer;
             transition: all 0.3s ease;
             border: 2px solid transparent;
-            min-height: 80px;
+            height: 70px; /* Changed from min-height to fixed height */
             font-size: 1.2rem;
             font-weight: 600;
+            width: 14.28%; /* Added - equal width for 7 columns */
         }
 
         .focused-calendar td:hover {
@@ -314,6 +320,7 @@
             gap: 3px;
             justify-content: center;
             margin-top: 5px;
+            flex-wrap: wrap; /* Added */
         }
 
         .event-dot {
@@ -432,13 +439,26 @@
             }
             .focused-content {
                 padding: 20px;
+                margin-top: 10px;
             }
             .focused-title {
                 font-size: 1.8rem;
             }
+            .focused-calendar {
+                border-spacing: 4px; /* Smaller spacing on mobile */
+            }
+            .focused-calendar th {
+                padding: 10px 1px;
+                font-size: 0.75rem;
+            }
             .focused-calendar td {
-                min-height: 50px;
+                height: 50px; /* Smaller cells on mobile */
                 font-size: 1rem;
+                border-radius: 10px;
+            }
+            .nav-btn {
+                padding: 10px 15px;
+                font-size: 0.85rem;
             }
         }
 
