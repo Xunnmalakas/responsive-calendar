@@ -13,218 +13,655 @@
 
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: #fff5f7;
-            padding: 20px;
+            background: linear-gradient(135deg, #fff0f3 0%, #f8e1e7 100%);
+            min-height: 100vh;
             color: #5e548e;
         }
 
         .header {
-            text-align: center;
-            margin-bottom: 30px;
-            padding: 20px;
             background: white;
-            border-radius: 20px;
-            box-shadow: 0 4px 15px rgba(255, 175, 204, 0.2);
-            border: 2px solid #ffafcc;
+            padding: 20px;
+            text-align: center;
+            box-shadow: 0 4px 20px rgba(255, 175, 204, 0.3);
+            border-bottom: 3px solid #ffafcc;
+            position: sticky;
+            top: 0;
+            z-index: 100;
         }
 
         h1 {
             color: #ff758f;
-            font-size: 2.5rem;
-            margin-bottom: 10px;
+            font-size: 2rem;
         }
 
-        .subtitle {
-            color: #cdb4db;
-            font-size: 1.1rem;
+        .container {
+            max-width: 1400px;
+            margin: 30px auto;
+            padding: 0 20px;
         }
 
         .year-grid {
             display: grid;
-            grid-template-columns: repeat(4, 1fr);
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
             gap: 20px;
-            max-width: 1400px;
-            margin: 0 auto;
         }
 
-        .month-box {
+        .month-card {
             background: white;
-            border-radius: 15px;
-            padding: 15px;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
-            border: 1px solid #ffe5ec;
+            border-radius: 20px;
+            padding: 20px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.08);
+            cursor: pointer;
+            transition: all 0.4s ease;
+            border: 2px solid transparent;
         }
 
-        .month-name {
+        .month-card:hover {
+            transform: translateY(-5px) scale(1.02);
+            border-color: #ffafcc;
+            box-shadow: 0 15px 40px rgba(255, 175, 204, 0.3);
+        }
+
+        .month-title {
             text-align: center;
-            font-size: 1.2rem;
+            font-size: 1.4rem;
             color: #ff758f;
             font-weight: 700;
-            margin-bottom: 10px;
-            padding-bottom: 8px;
-            border-bottom: 2px dashed #ffafcc;
+            margin-bottom: 15px;
             text-transform: uppercase;
         }
 
-        .calendar-table {
+        .mini-calendar {
             width: 100%;
             border-collapse: collapse;
         }
 
-        .calendar-table th {
-            font-size: 0.7rem;
+        .mini-calendar th {
+            font-size: 0.75rem;
             color: #cdb4db;
             padding: 5px;
-            font-weight: 600;
         }
 
-        .calendar-table td {
+        .mini-calendar td {
             text-align: center;
-            padding: 6px 4px;
-            font-size: 0.85rem;
-            border-radius: 5px;
+            padding: 8px 4px;
+            font-size: 0.9rem;
+            border-radius: 6px;
+            position: relative;
         }
 
-        .calendar-table td:hover {
+        .mini-day:hover {
             background: #fff0f3;
         }
 
-        .today {
-            background: #ffafcc !important;
-            color: white !important;
+        .mini-day.today {
+            background: #ffafcc;
+            color: white;
             font-weight: 700;
         }
 
-        .weekend {
+        .mini-day.has-event::after {
+            content: '';
+            position: absolute;
+            bottom: 2px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 4px;
+            height: 4px;
+            background: #ff4d6d;
+            border-radius: 50%;
+        }
+
+        .mini-day.other-month {
+            opacity: 0.3;
+            color: #ccc;
+        }
+
+        /* Zoom View */
+        .month-zoom {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 240, 243, 0.98);
+            z-index: 200;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.4s ease;
+            padding: 20px;
+        }
+
+        .month-zoom.active {
+            opacity: 1;
+            pointer-events: all;
+        }
+
+        .zoom-content {
+            background: white;
+            border-radius: 30px;
+            padding: 40px;
+            width: 100%;
+            max-width: 800px;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 25px 80px rgba(0,0,0,0.2);
+            border: 3px solid #ffafcc;
+            transform: scale(0.8) translateY(50px);
+            transition: transform 0.5s ease;
+            position: relative;
+        }
+
+        .month-zoom.active .zoom-content {
+            transform: scale(1) translateY(0);
+        }
+
+        .close-zoom {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: #fff0f3;
+            border: 2px solid #ffafcc;
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            font-size: 1.5rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .close-zoom:hover {
+            background: #ffafcc;
+            color: white;
+            transform: rotate(90deg);
+        }
+
+        .zoom-title {
+            text-align: center;
+            font-size: 2.2rem;
             color: #ff758f;
+            font-weight: 700;
+            margin-bottom: 25px;
+            text-transform: uppercase;
         }
 
-        @media (max-width: 1200px) {
-            .year-grid {
-                grid-template-columns: repeat(3, 1fr);
-            }
+        .zoom-calendar {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 8px;
         }
 
-        @media (max-width: 900px) {
-            .year-grid {
-                grid-template-columns: repeat(2, 1fr);
-            }
+        .zoom-calendar th {
+            padding: 15px 5px;
+            font-weight: 700;
+            color: #cdb4db;
+            text-transform: uppercase;
         }
 
-        @media (max-width: 600px) {
+        .zoom-calendar td {
+            aspect-ratio: 1;
+            background: #fff9fb;
+            border-radius: 15px;
+            text-align: center;
+            vertical-align: middle;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+            min-height: 80px;
+        }
+
+        .zoom-calendar td:hover {
+            background: #fff0f3;
+            border-color: #ffafcc;
+            transform: scale(1.05);
+            box-shadow: 0 5px 15px rgba(255, 175, 204, 0.3);
+        }
+
+        .zoom-calendar td.other-month {
+            opacity: 0.3;
+            background: #f5f5f5;
+            cursor: default;
+        }
+
+        .zoom-calendar td.other-month:hover {
+            transform: none;
+            border-color: transparent;
+            box-shadow: none;
+        }
+
+        .zoom-calendar td.today {
+            background: linear-gradient(135deg, #ffafcc 0%, #ff85a1 100%);
+            color: white;
+            font-weight: 700;
+        }
+
+        .zoom-day-number {
+            font-size: 1.3rem;
+            font-weight: 600;
+            display: block;
+            margin-bottom: 4px;
+        }
+
+        .event-dots {
+            display: flex;
+            gap: 3px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .event-dot {
+            width: 6px;
+            height: 6px;
+            background: #ff4d6d;
+            border-radius: 50%;
+        }
+
+        /* Event Modal */
+        .event-modal {
+            display: none;
+            position: fixed;
+            z-index: 300;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            backdrop-filter: blur(5px);
+        }
+
+        .event-modal-content {
+            background: white;
+            margin: 10% auto;
+            padding: 30px;
+            width: 90%;
+            max-width: 400px;
+            border-radius: 25px;
+            border: 3px solid #ffafcc;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes slideIn {
+            from { transform: translateY(-50px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        .event-modal-header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .event-modal-date {
+            font-size: 1.5rem;
+            color: #ff758f;
+            font-weight: 700;
+        }
+
+        .event-modal-day {
+            color: #cdb4db;
+            font-size: 1rem;
+        }
+
+        textarea {
+            width: 100%;
+            height: 120px;
+            padding: 15px;
+            border-radius: 15px;
+            border: 2px solid #cdb4db;
+            font-family: inherit;
+            font-size: 1rem;
+            resize: vertical;
+            margin-bottom: 20px;
+        }
+
+        textarea:focus {
+            outline: none;
+            border-color: #ffafcc;
+        }
+
+        .modal-buttons {
+            display: flex;
+            gap: 10px;
+        }
+
+        .modal-buttons button {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: 600;
+            color: white;
+            transition: all 0.3s ease;
+        }
+
+        .btn-close { background: #95a5a6; }
+        .btn-close:hover { background: #7f8c8d; }
+        .btn-delete { background: #e74c3c; }
+        .btn-delete:hover { background: #c0392b; }
+        .btn-save { background: #27ae60; }
+        .btn-save:hover { background: #229954; }
+
+        /* Responsive */
+        @media (max-width: 768px) {
             .year-grid {
                 grid-template-columns: 1fr;
             }
-            h1 {
-                font-size: 1.8rem;
-            }
-        }
 
-        @media print {
-            body {
-                background: white;
-                padding: 10px;
+            .zoom-content {
+                padding: 20px;
+                border-radius: 20px;
             }
-            .header {
-                box-shadow: none;
-                border: 1px solid #ddd;
-                margin-bottom: 15px;
+
+            .zoom-title {
+                font-size: 1.6rem;
             }
-            .month-box {
-                box-shadow: none;
-                border: 1px solid #ddd;
-                break-inside: avoid;
+
+            .zoom-calendar {
+                border-spacing: 4px;
+            }
+
+            .zoom-calendar td {
+                min-height: 50px;
+                border-radius: 10px;
+            }
+
+            .zoom-day-number {
+                font-size: 1rem;
+            }
+
+            .zoom-calendar th {
+                font-size: 0.75rem;
+                padding: 10px 2px;
             }
         }
     </style>
 </head>
 <body>
     <div class="header">
-        <h1>2026 Calendar</h1>
-        <div class="subtitle">Full Year View</div>
+        <h1>✨ 2026 Calendar</h1>
+        <p style="color: #cdb4db; margin-top: 5px;">Click any month to zoom in • Click any day to add events</p>
     </div>
 
-    <div class="year-grid" id="yearGrid"></div>
+    <div class="container">
+        <div class="year-grid" id="yearGrid"></div>
+    </div>
+
+    <!-- Zoomed Month View -->
+    <div class="month-zoom" id="monthZoom">
+        <div class="zoom-content">
+            <button class="close-zoom" onclick="closeZoom()">✕</button>
+            <div class="zoom-title" id="zoomTitle">January</div>
+            <table class="zoom-calendar" id="zoomCalendar"></table>
+        </div>
+    </div>
+
+    <!-- Event Modal -->
+    <div class="event-modal" id="eventModal">
+        <div class="event-modal-content">
+            <div class="event-modal-header">
+                <div class="event-modal-date" id="eventDate">January 1, 2026</div>
+                <div class="event-modal-day" id="eventDay">Thursday</div>
+            </div>
+            <textarea id="eventInput" placeholder="Add your events here...
+One event per line"></textarea>
+            <div class="modal-buttons">
+                <button class="btn-close" onclick="closeEventModal()">Close</button>
+                <button class="btn-delete" onclick="deleteEvent()">Delete</button>
+                <button class="btn-save" onclick="saveEvent()">Save</button>
+            </div>
+        </div>
+    </div>
 
     <script>
         const months = [
-            "January", "February", "March", "April",
-            "May", "June", "July", "August",
-            "September", "October", "November", "December"
+            "January", "February", "March", "April", "May", "June",
+            "July", "August", "September", "October", "November", "December"
         ];
 
         const daysOfWeek = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+        let events = JSON.parse(localStorage.getItem("calendarEvents2026")) || {};
+        let currentZoomMonth = 0;
+        let selectedDate = null;
 
-        function createMonthCalendar(monthIndex) {
-            const year = 2026;
-            const firstDay = new Date(year, monthIndex, 1).getDay();
-            const daysInMonth = new Date(year, monthIndex + 1, 0).getDate();
+        function init() {
+            renderYearView();
+            document.addEventListener('keydown', e => {
+                if (e.key === 'Escape') {
+                    if (document.getElementById('eventModal').style.display === 'block') {
+                        closeEventModal();
+                    } else if (document.getElementById('monthZoom').classList.contains('active')) {
+                        closeZoom();
+                    }
+                }
+            });
+        }
+
+        function renderYearView() {
+            const grid = document.getElementById('yearGrid');
+            grid.innerHTML = '';
+
+            months.forEach((month, index) => {
+                const card = document.createElement('div');
+                card.className = 'month-card';
+                card.onclick = () => zoomToMonth(index);
+
+                const title = document.createElement('div');
+                title.className = 'month-title';
+                title.textContent = month;
+                card.appendChild(title);
+
+                const table = document.createElement('table');
+                table.className = 'mini-calendar';
+
+                // Header
+                const thead = document.createElement('thead');
+                const headerRow = document.createElement('tr');
+                daysOfWeek.forEach(day => {
+                    const th = document.createElement('th');
+                    th.textContent = day[0];
+                    headerRow.appendChild(th);
+                });
+                thead.appendChild(headerRow);
+                table.appendChild(thead);
+
+                // Days
+                const tbody = document.createElement('tbody');
+                const firstDay = new Date(2026, index, 1).getDay();
+                const daysInMonth = new Date(2026, index + 1, 0).getDate();
+                const daysInPrevMonth = new Date(2026, index, 0).getDate();
+                const today = new Date();
+
+                let dayCount = 1;
+
+                for (let row = 0; row < 6; row++) {
+                    if (dayCount > daysInMonth) break;
+                    const tr = document.createElement('tr');
+                    
+                    for (let col = 0; col < 7; col++) {
+                        const td = document.createElement('td');
+                        td.className = 'mini-day';
+
+                        if (row === 0 && col < firstDay) {
+                            td.textContent = daysInPrevMonth - (firstDay - col - 1);
+                            td.classList.add('other-month');
+                        } else if (dayCount <= daysInMonth) {
+                            td.textContent = dayCount;
+                            
+                            if (today.getDate() === dayCount && 
+                                today.getMonth() === index && 
+                                today.getFullYear() === 2026) {
+                                td.classList.add('today');
+                            }
+
+                            const dateKey = `2026-${String(index + 1).padStart(2, '0')}-${String(dayCount).padStart(2, '0')}`;
+                            if (events[dateKey] && events[dateKey].length > 0) {
+                                td.classList.add('has-event');
+                            }
+                            dayCount++;
+                        } else {
+                            td.textContent = dayCount - daysInMonth;
+                            td.classList.add('other-month');
+                            dayCount++;
+                        }
+                        tr.appendChild(td);
+                    }
+                    tbody.appendChild(tr);
+                }
+
+                table.appendChild(tbody);
+                card.appendChild(table);
+                grid.appendChild(card);
+            });
+        }
+
+        function zoomToMonth(monthIndex) {
+            currentZoomMonth = monthIndex;
+            document.getElementById('zoomTitle').textContent = months[monthIndex];
+            renderZoomCalendar();
+            document.getElementById('monthZoom').classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeZoom() {
+            document.getElementById('monthZoom').classList.remove('active');
+            document.body.style.overflow = '';
+            renderYearView();
+        }
+
+        function renderZoomCalendar() {
+            const table = document.getElementById('zoomCalendar');
+            table.innerHTML = '';
+
+            // Header
+            const thead = document.createElement('thead');
+            const headerRow = document.createElement('tr');
+            daysOfWeek.forEach(day => {
+                const th = document.createElement('th');
+                th.textContent = day;
+                headerRow.appendChild(th);
+            });
+            thead.appendChild(headerRow);
+            table.appendChild(thead);
+
+            // Days
+            const tbody = document.createElement('tbody');
+            const firstDay = new Date(2026, currentZoomMonth, 1).getDay();
+            const daysInMonth = new Date(2026, currentZoomMonth + 1, 0).getDate();
+            const daysInPrevMonth = new Date(2026, currentZoomMonth, 0).getDate();
             const today = new Date();
-
-            let html = `
-                <div class="month-box">
-                    <div class="month-name">${months[monthIndex]}</div>
-                    <table class="calendar-table">
-                        <thead>
-                            <tr>
-                                ${daysOfWeek.map(day => `<th>${day}</th>`).join('')}
-                            </tr>
-                        </thead>
-                        <tbody>
-            `;
 
             let dayCount = 1;
 
             for (let row = 0; row < 6; row++) {
                 if (dayCount > daysInMonth) break;
-                
-                html += '<tr>';
+                const tr = document.createElement('tr');
                 
                 for (let col = 0; col < 7; col++) {
+                    const td = document.createElement('td');
+
                     if (row === 0 && col < firstDay) {
-                        html += '<td></td>';
+                        td.textContent = daysInPrevMonth - (firstDay - col - 1);
+                        td.classList.add('other-month');
                     } else if (dayCount <= daysInMonth) {
-                        const isToday = today.getDate() === dayCount && 
-                                       today.getMonth() === monthIndex && 
-                                       today.getFullYear() === year;
-                        
-                        const isWeekend = col === 0 || col === 6;
-                        const classes = [];
-                        
-                        if (isToday) classes.push('today');
-                        if (isWeekend) classes.push('weekend');
-                        
-                        html += `<td class="${classes.join(' ')}">${dayCount}</td>`;
+                        const dayNum = document.createElement('span');
+                        dayNum.className = 'zoom-day-number';
+                        dayNum.textContent = dayCount;
+                        td.appendChild(dayNum);
+
+                        if (today.getDate() === dayCount && 
+                            today.getMonth() === currentZoomMonth && 
+                            today.getFullYear() === 2026) {
+                            td.classList.add('today');
+                        }
+
+                        const dateKey = `2026-${String(currentZoomMonth + 1).padStart(2, '0')}-${String(dayCount).padStart(2, '0')}`;
+                        if (events[dateKey] && events[dateKey].length > 0) {
+                            const dots = document.createElement('div');
+                            dots.className = 'event-dots';
+                            const count = Math.min(events[dateKey].length, 4);
+                            for (let i = 0; i < count; i++) {
+                                const dot = document.createElement('div');
+                                dot.className = 'event-dot';
+                                dots.appendChild(dot);
+                            }
+                            td.appendChild(dots);
+                        }
+
+                        td.onclick = () => openEventModal(dayCount);
                         dayCount++;
                     } else {
-                        html += '<td></td>';
+                        td.textContent = dayCount - daysInMonth;
+                        td.classList.add('other-month');
+                        dayCount++;
                     }
+                    tr.appendChild(td);
                 }
-                
-                html += '</tr>';
+                tbody.appendChild(tr);
             }
 
-            html += `
-                        </tbody>
-                    </table>
-                </div>
-            `;
-
-            return html;
+            table.appendChild(tbody);
         }
 
-        function renderCalendar() {
-            const grid = document.getElementById('yearGrid');
-            let html = '';
+        function openEventModal(day) {
+            selectedDate = new Date(2026, currentZoomMonth, day);
+            const dateKey = `2026-${String(currentZoomMonth + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
             
-            for (let i = 0; i < 12; i++) {
-                html += createMonthCalendar(i);
+            document.getElementById('eventDate').textContent = selectedDate.toLocaleDateString('en-US', {
+                month: 'long', day: 'numeric', year: 'numeric'
+            });
+            document.getElementById('eventDay').textContent = selectedDate.toLocaleDateString('en-US', { weekday: 'long' });
+            
+            const dayEvents = events[dateKey] || [];
+            document.getElementById('eventInput').value = dayEvents.join('\n');
+            
+            document.getElementById('eventModal').style.display = 'block';
+            document.getElementById('eventInput').focus();
+        }
+
+        function closeEventModal() {
+            document.getElementById('eventModal').style.display = 'none';
+            selectedDate = null;
+        }
+
+        function saveEvent() {
+            if (!selectedDate) return;
+            
+            const dateKey = `2026-${String(selectedDate.getMonth() + 1).padStart(2, '0')}-${String(selectedDate.getDate()).padStart(2, '0')}`;
+            const input = document.getElementById('eventInput').value.trim();
+            
+            if (input) {
+                events[dateKey] = input.split('\n').filter(e => e.trim());
+            } else {
+                delete events[dateKey];
             }
             
-            grid.innerHTML = html;
+            localStorage.setItem('calendarEvents2026', JSON.stringify(events));
+            renderZoomCalendar();
+            closeEventModal();
         }
 
-        renderCalendar();
+        function deleteEvent() {
+            if (!selectedDate) return;
+            
+            const dateKey = `2026-${String(selectedDate.getMonth() + 1).padStart(2, '0')}-${String(selectedDate.getDate()).padStart(2, '0')}`;
+            delete events[dateKey];
+            
+            localStorage.setItem('calendarEvents2026', JSON.stringify(events));
+            renderZoomCalendar();
+            closeEventModal();
+        }
+
+        window.onclick = function(e) {
+            if (e.target === document.getElementById('eventModal')) {
+                closeEventModal();
+            }
+        };
+
+        init();
     </script>
 </body>
 </html>
