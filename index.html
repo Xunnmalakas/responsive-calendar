@@ -1,4 +1,4 @@
-html_code = '''<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -88,23 +88,6 @@ html_code = '''<!DOCTYPE html>
             color: var(--text-dark);
             min-width: 100px;
             text-align: center;
-        }
-
-        /* View Toggle */
-        .view-toggle {
-            display: flex;
-            gap: 10px;
-        }
-
-        .view-btn {
-            background: var(--soft-purple);
-            padding: 8px 16px;
-            font-size: 0.85rem;
-        }
-
-        .view-btn.active {
-            background: var(--primary-pink);
-            box-shadow: inset 0 2px 4px rgba(0,0,0,0.1);
         }
 
         /* Container */
@@ -518,22 +501,6 @@ html_code = '''<!DOCTYPE html>
                 padding: 10px 2px;
             }
         }
-
-        /* Loading Animation */
-        .zoom-transition {
-            position: fixed;
-            background: var(--white);
-            border-radius: 20px;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
-            z-index: 150;
-            pointer-events: none;
-            opacity: 0;
-            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-
-        .zoom-transition.active {
-            opacity: 1;
-        }
     </style>
 </head>
 <body>
@@ -550,11 +517,9 @@ html_code = '''<!DOCTYPE html>
     </div>
 
     <div class="container">
-        <!-- Year Overview Grid -->
         <div class="year-grid" id="yearGrid"></div>
     </div>
 
-    <!-- Zoomed Month Detail View -->
     <div class="month-detail" id="monthDetail">
         <div class="month-detail-content">
             <button class="close-detail" onclick="closeMonthDetail()">✕</button>
@@ -571,7 +536,6 @@ html_code = '''<!DOCTYPE html>
         </div>
     </div>
 
-    <!-- Event Modal -->
     <div id="eventModal" class="modal">
         <div class="modal-content">
             <div class="modal-header">
@@ -606,7 +570,6 @@ html_code = '''<!DOCTYPE html>
             setupKeyboardNav();
         }
 
-        // Render Year Overview Grid
         function renderYearView() {
             const grid = document.getElementById('yearGrid');
             grid.innerHTML = '';
@@ -631,7 +594,6 @@ html_code = '''<!DOCTYPE html>
             const miniCal = document.createElement('div');
             miniCal.className = 'mini-calendar';
 
-            // Day headers
             daysOfWeek.forEach(day => {
                 const dayHeader = document.createElement('div');
                 dayHeader.className = 'mini-day-header';
@@ -639,13 +601,11 @@ html_code = '''<!DOCTYPE html>
                 miniCal.appendChild(dayHeader);
             });
 
-            // Days
             const firstDay = new Date(currentYear, monthIndex, 1).getDay();
             const daysInMonth = new Date(currentYear, monthIndex + 1, 0).getDate();
             const daysInPrevMonth = new Date(currentYear, monthIndex, 0).getDate();
             const today = new Date();
 
-            // Previous month padding
             for (let i = firstDay - 1; i >= 0; i--) {
                 const day = document.createElement('div');
                 day.className = 'mini-day other-month';
@@ -653,7 +613,6 @@ html_code = '''<!DOCTYPE html>
                 miniCal.appendChild(day);
             }
 
-            // Current month days
             for (let d = 1; d <= daysInMonth; d++) {
                 const day = document.createElement('div');
                 day.className = 'mini-day';
@@ -673,7 +632,6 @@ html_code = '''<!DOCTYPE html>
                 miniCal.appendChild(day);
             }
 
-            // Next month padding
             const remaining = 42 - (firstDay + daysInMonth);
             for (let d = 1; d <= remaining; d++) {
                 const day = document.createElement('div');
@@ -686,7 +644,6 @@ html_code = '''<!DOCTYPE html>
             return card;
         }
 
-        // Zoom Animation to Month Detail
         function zoomToMonth(monthIndex) {
             currentMonth = monthIndex;
             isDetailView = true;
@@ -709,8 +666,6 @@ html_code = '''<!DOCTYPE html>
             detail.classList.remove('active');
             document.body.style.overflow = '';
             isDetailView = false;
-            
-            // Refresh year view to show any updates
             renderYearView();
         }
 
@@ -718,7 +673,6 @@ html_code = '''<!DOCTYPE html>
             const grid = document.getElementById('detailCalendar');
             grid.innerHTML = '';
 
-            // Headers
             daysOfWeek.forEach(day => {
                 const header = document.createElement('div');
                 header.className = 'detail-day-header';
@@ -731,13 +685,11 @@ html_code = '''<!DOCTYPE html>
             const daysInPrevMonth = new Date(currentYear, currentMonth, 0).getDate();
             const today = new Date();
 
-            // Previous month
             for (let i = firstDay - 1; i >= 0; i--) {
                 const day = createDetailDay(daysInPrevMonth - i, true);
                 grid.appendChild(day);
             }
 
-            // Current month
             for (let d = 1; d <= daysInMonth; d++) {
                 const isToday = today.getDate() === d && 
                                today.getMonth() === currentMonth && 
@@ -746,7 +698,6 @@ html_code = '''<!DOCTYPE html>
                 grid.appendChild(day);
             }
 
-            // Next month
             const remaining = 42 - (firstDay + daysInMonth);
             for (let d = 1; d <= remaining; d++) {
                 const day = createDetailDay(d, true);
@@ -801,7 +752,6 @@ html_code = '''<!DOCTYPE html>
             renderDetailCalendar();
         }
 
-        // Event Modal Functions
         function openModal(day) {
             selectedDate = new Date(currentYear, currentMonth, day);
             const dateKey = getDateKey(currentYear, currentMonth, day);
@@ -812,7 +762,7 @@ html_code = '''<!DOCTYPE html>
             document.getElementById('modalDay').textContent = selectedDate.toLocaleDateString('en-US', { weekday: 'long' });
             
             const dayEvents = events[dateKey] || [];
-            document.getElementById('eventInput').value = dayEvents.join('\\n');
+            document.getElementById('eventInput').value = dayEvents.join('\n');
             
             document.getElementById('eventModal').style.display = 'block';
             document.getElementById('eventInput').focus();
@@ -830,7 +780,7 @@ html_code = '''<!DOCTYPE html>
             const input = document.getElementById('eventInput').value.trim();
             
             if (input) {
-                events[dateKey] = input.split('\\n').filter(e => e.trim());
+                events[dateKey] = input.split('\n').filter(e => e.trim());
             } else {
                 delete events[dateKey];
             }
@@ -851,7 +801,6 @@ html_code = '''<!DOCTYPE html>
             closeModal();
         }
 
-        // Navigation Functions
         function changeYear(delta) {
             currentYear += delta;
             renderYearView();
@@ -869,7 +818,6 @@ html_code = '''<!DOCTYPE html>
             return `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
         }
 
-        // Keyboard Navigation
         function setupKeyboardNav() {
             document.addEventListener('keydown', e => {
                 if (document.getElementById('eventModal').style.display === 'block') {
@@ -888,14 +836,12 @@ html_code = '''<!DOCTYPE html>
             });
         }
 
-        // Close modal on outside click
         window.onclick = function(e) {
             const modal = document.getElementById('eventModal');
             if (e.target === modal) closeModal();
         };
 
-        // Initialize
         init();
     </script>
 </body>
-</html>'''
+</html>
