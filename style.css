@@ -92,6 +92,7 @@ button:hover {
     max-width: 900px;
     margin: 30px auto;
     padding: 0 20px;
+    width: 100%; /* Added to ensure full width usage */
 }
 
 .month-container {
@@ -101,6 +102,8 @@ button:hover {
     box-shadow: 0 10px 40px rgba(0,0,0,0.1);
     border: 2px solid var(--primary-pink);
     animation: fadeIn 0.4s ease;
+    width: 100%; /* Added to fill wrapper */
+    overflow: hidden; /* Added to prevent overflow */
 }
 
 @keyframes fadeIn {
@@ -132,6 +135,7 @@ button:hover {
     display: grid;
     grid-template-columns: repeat(7, 1fr);
     gap: 8px;
+    width: 100%; /* Added to ensure grid fills container */
 }
 
 .day-header {
@@ -141,6 +145,10 @@ button:hover {
     color: var(--soft-purple);
     font-size: 0.9rem;
     text-transform: uppercase;
+    min-width: 0; /* Added to prevent overflow */
+    overflow: hidden; /* Added to handle text overflow */
+    text-overflow: ellipsis; /* Added for long text */
+    white-space: nowrap; /* Added to keep single line */
 }
 
 .day-cell {
@@ -156,6 +164,7 @@ button:hover {
     border: 2px solid transparent;
     position: relative;
     min-height: 80px;
+    min-width: 0; /* Added to prevent grid blowout */
 }
 
 .day-cell:hover {
@@ -306,81 +315,3 @@ textarea:focus {
 .modal-footer {
     display: flex;
     gap: 10px;
-    flex-wrap: wrap;
-}
-
-.modal-footer button {
-    flex: 1;
-    min-width: 100px;
-}
-
-.delete-btn { background: #e74c3c; }
-.delete-btn:hover { background: #c0392b; }
-.save-btn { background: #27ae60; }
-.save-btn:hover { background: #229954; }
-.close-btn { background: #95a5a6; }
-.close-btn:hover { background: #7f8c8d; }
-
-/* Mobile Responsive */
-@media (max-width: 768px) {
-    .header-content {
-        flex-direction: column;
-        text-align: center;
-    }
-
-    h1 { font-size: 1.5rem; }
-
-    .month-container {
-        padding: 20px 15px;
-        border-radius: 20px;
-    }
-
-    .month-title {
-        font-size: 1.8rem;
-        letter-spacing: 2px;
-    }
-
-    .calendar-grid { gap: 4px; }
-
-    .day-header {
-        padding: 10px 2px;
-        font-size: 0.75rem;
-    }
-
-    .day-cell {
-        min-height: 50px;
-        border-radius: 10px;
-    }
-
-    .day-number { font-size: 1rem; }
-
-    .mobile-nav { display: flex; }
-    .swipe-hint { display: block; }
-
-    button {
-        padding: 10px 15px;
-        font-size: 0.85rem;
-    }
-}
-
-@media (max-width: 480px) {
-    .calendar-wrapper {
-        padding: 0 10px;
-        margin: 20px auto;
-    }
-
-    .month-container { padding: 15px 10px; }
-
-    .day-header {
-        font-size: 0.65rem;
-        padding: 8px 1px;
-    }
-
-    .day-cell {
-        min-height: 45px;
-        border-radius: 8px;
-    }
-
-    .day-number { font-size: 0.9rem; }
-    .event-indicator { width: 6px; height: 6px; }
-}

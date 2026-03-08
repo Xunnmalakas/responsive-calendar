@@ -217,7 +217,7 @@
         }
 
         .close-focused:hover {
-            background: #ffafcc;
+            background:#ffafcc;
             color: white;
             transform: rotate(90deg);
         }
@@ -323,7 +323,6 @@
             border-radius: 50%;
         }
 
-        /* Event Modal */
         .event-modal {
             display: none;
             position: fixed;
@@ -409,7 +408,6 @@
         .btn-save { background: #27ae60; }
         .btn-save:hover { background: #229954; }
 
-        /* Responsive */
         @media (max-width: 1200px) {
             .year-grid {
                 grid-template-columns: repeat(3, 1fr);
@@ -451,7 +449,6 @@
     </style>
 </head>
 <body>
-    <!-- Main View -->
     <div id="mainView">
         <div class="header">
             <h1>✨ 2026 Calendar</h1>
@@ -468,7 +465,6 @@
         </div>
     </div>
 
-    <!-- Focused Month View -->
     <div class="focused-month-view" id="focusedView">
         <div class="focused-content">
             <button class="close-focused" onclick="closeFocusedView()">✕</button>
@@ -482,7 +478,6 @@
         </div>
     </div>
 
-    <!-- Event Modal -->
     <div class="event-modal" id="eventModal">
         <div class="event-modal-content">
             <div class="event-modal-header">
@@ -500,7 +495,6 @@ One event per line"></textarea>
     </div>
 
     <script>
-        // 2026 Calendar - Fixed Year
         const currentYear = 2026;
         let focusedMonth = 0;
         let selectedDate = null;
@@ -512,16 +506,13 @@ One event per line"></textarea>
 
         const daysOfWeek = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
         
-        // Load events from localStorage
         let events = JSON.parse(localStorage.getItem("calendarEvents2026")) || {};
 
-        // Initialize
         function init() {
             renderYearView();
             setupKeyboardNav();
         }
 
-        // Render Year Overview
         function renderYearView() {
             const grid = document.getElementById('yearGrid');
             grid.innerHTML = '';
@@ -561,7 +552,6 @@ One event per line"></textarea>
             const daysInPrevMonth = new Date(currentYear, monthIndex, 0).getDate();
             const today = new Date();
 
-            // Previous month padding
             for (let i = firstDay - 1; i >= 0; i--) {
                 const day = document.createElement('div');
                 day.className = 'day empty';
@@ -569,7 +559,6 @@ One event per line"></textarea>
                 daysDiv.appendChild(day);
             }
 
-            // Current month days
             for (let d = 1; d <= daysInMonth; d++) {
                 const day = document.createElement('div');
                 day.className = 'day';
@@ -591,7 +580,6 @@ One event per line"></textarea>
                 daysDiv.appendChild(day);
             }
 
-            // Next month padding
             const totalCells = firstDay + daysInMonth;
             const remaining = 42 - totalCells;
             for (let d = 1; d <= remaining; d++) {
@@ -605,35 +593,29 @@ One event per line"></textarea>
             return card;
         }
 
-        // Focus Month (Zoom In)
         function focusMonth(monthIndex) {
             focusedMonth = monthIndex;
             
-            // Highlight the clicked month card
             document.querySelectorAll('.month-card').forEach(card => {
                 card.classList.remove('focused');
             });
             document.getElementById(`month-${monthIndex}`).classList.add('focused');
             
-            // Show focused view
             document.getElementById('focusedTitle').textContent = `${months[monthIndex]} 2026`;
             renderFocusedCalendar();
             document.getElementById('focusedView').classList.add('active');
             document.body.style.overflow = 'hidden';
         }
 
-        // Close Focused View (Zoom Out)
         function closeFocusedView() {
             document.getElementById('focusedView').classList.remove('active');
             document.body.style.overflow = '';
             
-            // Remove highlight
             document.querySelectorAll('.month-card').forEach(card => {
                 card.classList.remove('focused');
             });
         }
 
-        // Navigate months in focused view
         function changeFocusedMonth(delta) {
             focusedMonth += delta;
             if (focusedMonth > 11) focusedMonth = 0;
@@ -643,12 +625,10 @@ One event per line"></textarea>
             renderFocusedCalendar();
         }
 
-        // Render Focused Calendar
         function renderFocusedCalendar() {
             const table = document.getElementById('focusedCalendar');
             table.innerHTML = '';
 
-            // Header
             const thead = document.createElement('thead');
             const headerRow = document.createElement('tr');
             daysOfWeek.forEach(day => {
@@ -659,7 +639,6 @@ One event per line"></textarea>
             thead.appendChild(headerRow);
             table.appendChild(thead);
 
-            // Days
             const tbody = document.createElement('tbody');
             const firstDay = new Date(currentYear, focusedMonth, 1).getDay();
             const daysInMonth = new Date(currentYear, focusedMonth + 1, 0).getDate();
@@ -715,7 +694,6 @@ One event per line"></textarea>
             table.appendChild(tbody);
         }
 
-        // Event Modal Functions
         function openEventModal(day) {
             selectedDate = new Date(currentYear, focusedMonth, day);
             const dateKey = `2026-${String(focusedMonth + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
@@ -767,7 +745,6 @@ One event per line"></textarea>
             closeEventModal();
         }
 
-        // Keyboard Navigation
         function setupKeyboardNav() {
             document.addEventListener('keydown', e => {
                 if (document.getElementById('eventModal').style.display === 'block') {
@@ -783,13 +760,11 @@ One event per line"></textarea>
             });
         }
 
-        // Close modal on outside click
         window.onclick = function(e) {
             const modal = document.getElementById('eventModal');
             if (e.target === modal) closeEventModal();
         };
 
-        // Start the app
         init();
     </script>
 </body>
