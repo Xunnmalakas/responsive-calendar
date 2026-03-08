@@ -31,13 +31,14 @@
 
         .header h1 {
             color: #ff758f;
-            font-size: 2.2rem;
+            font-size: 2.5rem;
             margin-bottom: 5px;
         }
 
-        .subtitle {
+        .year-display {
             color: #cdb4db;
-            font-size: 1rem;
+            font-size: 1.5rem;
+            font-weight: 600;
             margin-bottom: 15px;
         }
 
@@ -58,42 +59,6 @@
             color: #5e548e;
             font-size: 1rem;
             font-weight: 600;
-        }
-
-        .nav-controls {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: 20px;
-            margin-bottom: 30px;
-            flex-wrap: wrap;
-        }
-
-        .nav-btn {
-            background: #ffafcc;
-            color: white;
-            border: none;
-            padding: 12px 25px;
-            border-radius: 25px;
-            cursor: pointer;
-            font-weight: 600;
-            font-size: 1rem;
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 10px rgba(255, 175, 204, 0.4);
-        }
-
-        .nav-btn:hover {
-            transform: translateY(-2px);
-            background: #ff85a1;
-            box-shadow: 0 6px 15px rgba(255, 175, 204, 0.6);
-        }
-
-        .year-display {
-            font-size: 1.8rem;
-            font-weight: 700;
-            color: #5e548e;
-            min-width: 150px;
-            text-align: center;
         }
 
         .calendar-container {
@@ -170,7 +135,6 @@
             border-radius: 5px;
             padding: 5px;
             position: relative;
-            cursor: pointer;
         }
 
         .day:hover {
@@ -179,7 +143,7 @@
 
         .day.empty {
             background: transparent;
-            cursor: default;
+            color: #ccc;
         }
 
         .day.weekend {
@@ -204,6 +168,7 @@
             border-radius: 50%;
         }
 
+        /* Focused Month View */
         .focused-month-view {
             display: none;
             position: fixed;
@@ -273,6 +238,25 @@
             margin-bottom: 25px;
         }
 
+        .nav-btn {
+            background: #ffafcc;
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 10px rgba(255, 175, 204, 0.4);
+        }
+
+        .nav-btn:hover {
+            transform: translateY(-2px);
+            background: #ff85a1;
+            box-shadow: 0 6px 15px rgba(255, 175, 204, 0.6);
+        }
+
         .focused-calendar {
             width: 100%;
             border-collapse: separate;
@@ -339,6 +323,7 @@
             border-radius: 50%;
         }
 
+        /* Event Modal */
         .event-modal {
             display: none;
             position: fixed;
@@ -424,6 +409,7 @@
         .btn-save { background: #27ae60; }
         .btn-save:hover { background: #229954; }
 
+        /* Responsive */
         @media (max-width: 1200px) {
             .year-grid {
                 grid-template-columns: repeat(3, 1fr);
@@ -441,7 +427,7 @@
                 grid-template-columns: 1fr;
             }
             .header h1 {
-                font-size: 1.6rem;
+                font-size: 1.8rem;
             }
             .student-name {
                 font-size: 1.1rem;
@@ -465,10 +451,11 @@
     </style>
 </head>
 <body>
+    <!-- Main View -->
     <div id="mainView">
         <div class="header">
             <h1>✨ 2026 Calendar</h1>
-            <p class="subtitle">Click any month to focus and add events</p>
+            <div class="year-display">Full Year View</div>
             
             <div class="student-info">
                 <div class="student-name">Arriane Shayne Alarcon</div>
@@ -476,15 +463,12 @@
             </div>
         </div>
 
-            <div class="year-display" id="yearDisplay">2026</div>
-            
-        </div>
-
         <div class="calendar-container">
             <div class="year-grid" id="yearGrid"></div>
         </div>
     </div>
 
+    <!-- Focused Month View -->
     <div class="focused-month-view" id="focusedView">
         <div class="focused-content">
             <button class="close-focused" onclick="closeFocusedView()">✕</button>
@@ -498,6 +482,7 @@
         </div>
     </div>
 
+    <!-- Event Modal -->
     <div class="event-modal" id="eventModal">
         <div class="event-modal-content">
             <div class="event-modal-header">
@@ -515,8 +500,8 @@ One event per line"></textarea>
     </div>
 
     <script>
-
-        let currentYear = 2026;
+        // 2026 Calendar - Fixed Year
+        const currentYear = 2026;
         let focusedMonth = 0;
         let selectedDate = null;
 
@@ -527,17 +512,19 @@ One event per line"></textarea>
 
         const daysOfWeek = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
         
+        // Load events from localStorage
         let events = JSON.parse(localStorage.getItem("calendarEvents2026")) || {};
 
+        // Initialize
         function init() {
             renderYearView();
             setupKeyboardNav();
         }
 
+        // Render Year Overview
         function renderYearView() {
             const grid = document.getElementById('yearGrid');
             grid.innerHTML = '';
-            document.getElementById('yearDisplay').textContent = currentYear;
 
             months.forEach((month, index) => {
                 const card = createMonthCard(index);
@@ -553,7 +540,7 @@ One event per line"></textarea>
 
             const title = document.createElement('div');
             title.className = 'month-name';
-            title.textContent = monthIndex + 1;
+            title.textContent = months[monthIndex];
             card.appendChild(title);
 
             const weekdaysDiv = document.createElement('div');
@@ -574,6 +561,7 @@ One event per line"></textarea>
             const daysInPrevMonth = new Date(currentYear, monthIndex, 0).getDate();
             const today = new Date();
 
+            // Previous month padding
             for (let i = firstDay - 1; i >= 0; i--) {
                 const day = document.createElement('div');
                 day.className = 'day empty';
@@ -581,6 +569,7 @@ One event per line"></textarea>
                 daysDiv.appendChild(day);
             }
 
+            // Current month days
             for (let d = 1; d <= daysInMonth; d++) {
                 const day = document.createElement('div');
                 day.className = 'day';
@@ -593,7 +582,7 @@ One event per line"></textarea>
                 if (isToday) day.classList.add('today');
                 if (dayOfWeek === 0 || dayOfWeek === 6) day.classList.add('weekend');
 
-                const dateKey = `${currentYear}-${String(monthIndex + 1).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
+                const dateKey = `2026-${String(monthIndex + 1).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
                 if (events[dateKey] && events[dateKey].length > 0) {
                     day.classList.add('has-event');
                 }
@@ -602,6 +591,7 @@ One event per line"></textarea>
                 daysDiv.appendChild(day);
             }
 
+            // Next month padding
             const totalCells = firstDay + daysInMonth;
             const remaining = 42 - totalCells;
             for (let d = 1; d <= remaining; d++) {
@@ -615,53 +605,50 @@ One event per line"></textarea>
             return card;
         }
 
-        function changeYear(delta) {
-            currentYear += delta;
-            renderYearView();
-        }
-
+        // Focus Month (Zoom In)
         function focusMonth(monthIndex) {
             focusedMonth = monthIndex;
             
+            // Highlight the clicked month card
             document.querySelectorAll('.month-card').forEach(card => {
                 card.classList.remove('focused');
             });
             document.getElementById(`month-${monthIndex}`).classList.add('focused');
             
-            document.getElementById('focusedTitle').textContent = `${months[monthIndex]} ${currentYear}`;
+            // Show focused view
+            document.getElementById('focusedTitle').textContent = `${months[monthIndex]} 2026`;
             renderFocusedCalendar();
             document.getElementById('focusedView').classList.add('active');
             document.body.style.overflow = 'hidden';
         }
 
+        // Close Focused View (Zoom Out)
         function closeFocusedView() {
             document.getElementById('focusedView').classList.remove('active');
             document.body.style.overflow = '';
             
+            // Remove highlight
             document.querySelectorAll('.month-card').forEach(card => {
                 card.classList.remove('focused');
             });
         }
 
+        // Navigate months in focused view
         function changeFocusedMonth(delta) {
             focusedMonth += delta;
-            if (focusedMonth > 11) {
-                focusedMonth = 0;
-                currentYear++;
-            } else if (focusedMonth < 0) {
-                focusedMonth = 11;
-                currentYear--;
-            }
+            if (focusedMonth > 11) focusedMonth = 0;
+            else if (focusedMonth < 0) focusedMonth = 11;
             
-            document.getElementById('focusedTitle').textContent = `${months[focusedMonth]} ${currentYear}`;
+            document.getElementById('focusedTitle').textContent = `${months[focusedMonth]} 2026`;
             renderFocusedCalendar();
-            renderYearView(); 
         }
 
+        // Render Focused Calendar
         function renderFocusedCalendar() {
             const table = document.getElementById('focusedCalendar');
             table.innerHTML = '';
 
+            // Header
             const thead = document.createElement('thead');
             const headerRow = document.createElement('tr');
             daysOfWeek.forEach(day => {
@@ -672,6 +659,7 @@ One event per line"></textarea>
             thead.appendChild(headerRow);
             table.appendChild(thead);
 
+            // Days
             const tbody = document.createElement('tbody');
             const firstDay = new Date(currentYear, focusedMonth, 1).getDay();
             const daysInMonth = new Date(currentYear, focusedMonth + 1, 0).getDate();
@@ -699,7 +687,7 @@ One event per line"></textarea>
                         
                         if (isToday) td.classList.add('today');
 
-                        const dateKey = `${currentYear}-${String(focusedMonth + 1).padStart(2, '0')}-${String(dayCount).padStart(2, '0')}`;
+                        const dateKey = `2026-${String(focusedMonth + 1).padStart(2, '0')}-${String(dayCount).padStart(2, '0')}`;
                         if (events[dateKey] && events[dateKey].length > 0) {
                             const indicator = document.createElement('div');
                             indicator.className = 'event-indicator';
@@ -727,9 +715,10 @@ One event per line"></textarea>
             table.appendChild(tbody);
         }
 
+        // Event Modal Functions
         function openEventModal(day) {
             selectedDate = new Date(currentYear, focusedMonth, day);
-            const dateKey = `${currentYear}-${String(focusedMonth + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+            const dateKey = `2026-${String(focusedMonth + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
             
             document.getElementById('eventDate').textContent = selectedDate.toLocaleDateString('en-US', {
                 month: 'long', day: 'numeric', year: 'numeric'
@@ -751,7 +740,7 @@ One event per line"></textarea>
         function saveEvent() {
             if (!selectedDate) return;
             
-            const dateKey = `${selectedDate.getFullYear()}-${String(selectedDate.getMonth() + 1).padStart(2, '0')}-${String(selectedDate.getDate()).padStart(2, '0')}`;
+            const dateKey = `2026-${String(selectedDate.getMonth() + 1).padStart(2, '0')}-${String(selectedDate.getDate()).padStart(2, '0')}`;
             const input = document.getElementById('eventInput').value.trim();
             
             if (input) {
@@ -769,7 +758,7 @@ One event per line"></textarea>
         function deleteEvent() {
             if (!selectedDate) return;
             
-            const dateKey = `${selectedDate.getFullYear()}-${String(selectedDate.getMonth() + 1).padStart(2, '0')}-${String(selectedDate.getDate()).padStart(2, '0')}`;
+            const dateKey = `2026-${String(selectedDate.getMonth() + 1).padStart(2, '0')}-${String(selectedDate.getDate()).padStart(2, '0')}`;
             delete events[dateKey];
             
             localStorage.setItem('calendarEvents2026', JSON.stringify(events));
@@ -778,6 +767,7 @@ One event per line"></textarea>
             closeEventModal();
         }
 
+        // Keyboard Navigation
         function setupKeyboardNav() {
             document.addEventListener('keydown', e => {
                 if (document.getElementById('eventModal').style.display === 'block') {
@@ -793,11 +783,13 @@ One event per line"></textarea>
             });
         }
 
+        // Close modal on outside click
         window.onclick = function(e) {
             const modal = document.getElementById('eventModal');
             if (e.target === modal) closeEventModal();
         };
 
+        // Start the app
         init();
     </script>
 </body>
